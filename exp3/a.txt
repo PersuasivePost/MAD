@@ -1,0 +1,1 @@
+this exxp had only basic flutter setup and create and run a simple project using any of the emulators
