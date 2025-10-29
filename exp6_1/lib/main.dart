@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:exp6_1/home_page.dart';
+import 'package:exp6_1/pages/privacy_policy_page.dart';
+import 'package:exp6_1/pages/send_feedback_page.dart';
 
 void main() {
   runApp(const MyApp());

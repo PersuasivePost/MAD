@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package.exp6_1/widgets/my_drawer.dart';
+import 'package:exp6_1/widgets/my_drawer.dart';
+import 'package:exp6_1/pages/dashboard_page.dart';
+import 'package:exp6_1/pages/contacts_page.dart';
+import 'package:exp6_1/pages/events_page.dart';
+import 'package:exp6_1/pages/notes_page.dart';
+import 'package:exp6_1/pages/settings_page.dart';
+import 'package:exp6_1/pages/notifications_page.dart';
 
 // home page
 class HomePage extends StatefulWidget {

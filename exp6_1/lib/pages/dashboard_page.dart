@@ -1,3 +1,4 @@
+import 'package:exp6_1/pages/details_page.dart';
 import 'package:flutter/material.dart';
 // import 'details_page.dart' file
 
