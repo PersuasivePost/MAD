@@ -275,7 +275,8 @@ class _IncomePageState extends State<IncomePage> {
                       'date': selectedDate,
                     });
                   },
-                  child: const Text('Add', style: TextStyle(color: Colors.white)),
+                  child:
+                      const Text('Add', style: TextStyle(color: Colors.white)),
                 ),
               ],
             );

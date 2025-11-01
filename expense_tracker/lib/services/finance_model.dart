@@ -30,7 +30,8 @@ class FinanceModel extends ChangeNotifier {
   List<FinanceItem> get expenses => List.unmodifiable(_expenses);
   List<FinanceItem> get incomes => List.unmodifiable(_incomes);
 
-  void addExpense(String title, double amount, String category, {DateTime? date}) {
+  void addExpense(String title, double amount, String category,
+      {DateTime? date}) {
     final itemDate = date ?? DateTime.now();
     // If attached to a user, write to Firestore; snapshot listener will update local state.
     if (_userId != null) {
@@ -47,8 +48,8 @@ class FinanceModel extends ChangeNotifier {
       return;
     }
 
-    _expenses
-        .add(FinanceItem(title: title, amount: amount, category: category, date: itemDate));
+    _expenses.add(FinanceItem(
+        title: title, amount: amount, category: category, date: itemDate));
     notifyListeners();
   }
 

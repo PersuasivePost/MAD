@@ -48,7 +48,8 @@ class _ProfilePageState extends State<ProfilePage> {
               UserService.instance.userName.isNotEmpty
                   ? UserService.instance.userName
                   : 'Guest',
-              style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+              style:
+                  const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8.0),
             Row(

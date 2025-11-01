@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:expense_tracker/services/support_widgets.dart';
 import 'package:expense_tracker/services/finance_model.dart';
 import 'package:expense_tracker/services/user_service.dart';
+import 'package:expense_tracker/services/report_service.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -361,11 +362,133 @@ class _HomeState extends State<Home> {
                   ],
                 ),
               ),
+
+              const SizedBox(height: 18.0),
+
+              // Download Report Button
+              SizedBox(
+                width: width,
+                child: ElevatedButton.icon(
+                  onPressed: () => _showDownloadDialog(context),
+                  icon: const Icon(Icons.download, color: Colors.white),
+                  label: const Text(
+                    'Download Report',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff904c6e),
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void _showDownloadDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          title: const Text(
+            'Download Report',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Select the format to download your expense report:'),
+              const SizedBox(height: 20),
+              ListTile(
+                leading: const Icon(Icons.picture_as_pdf,
+                    color: Color(0xffee6856), size: 32),
+                title: const Text('PDF Report'),
+                subtitle: const Text('Includes pie chart and detailed tables'),
+                onTap: () async {
+                  Navigator.of(ctx).pop();
+                  await _downloadReport(context, 'pdf');
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.table_chart,
+                    color: Color(0xff69c56b), size: 32),
+                title: const Text('CSV Report'),
+                subtitle: const Text('Spreadsheet format for Excel'),
+                onTap: () async {
+                  Navigator.of(ctx).pop();
+                  await _downloadReport(context, 'csv');
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _downloadReport(BuildContext context, String format) async {
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(
+        child: CircularProgressIndicator(color: Color(0xff904c6e)),
+      ),
+    );
+
+    String? filePath;
+    if (format == 'pdf') {
+      filePath = await ReportService.generatePDFReport(isYear: _showThisYear);
+    } else {
+      filePath = await ReportService.generateCSVReport(isYear: _showThisYear);
+    }
+
+    // Hide loading
+    if (mounted) Navigator.of(context).pop();
+
+    // Show result
+    if (mounted) {
+      if (filePath != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Report saved to: $filePath'),
+            duration: const Duration(seconds: 4),
+            action: SnackBarAction(
+              label: 'OK',
+              onPressed: () {},
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('Failed to generate report. Please check permissions.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }
 
