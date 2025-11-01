@@ -91,6 +91,17 @@ class _LoginState extends State<Login> {
                     style: TextStyle(color: Colors.white70, fontSize: 16.0),
                   ),
                   const SizedBox(height: 80.0),
+
+                  // Email label and input
+                  const Text(
+                    "Email",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -102,18 +113,24 @@ class _LoginState extends State<Login> {
                       textInputAction: TextInputAction.next,
                       decoration: const InputDecoration(
                         border: InputBorder.none,
-                        prefixIcon: Icon(Icons.email, color: Color(0xff3d3e67)),
+                        prefixIcon: Icon(
+                          Icons.email,
+                          size: 24.0,
+                          color: Color(0xff3d3e67),
+                        ),
                         hintText: 'Enter your email',
+                        hintStyle: TextStyle(fontSize: 16.0),
                         contentPadding: EdgeInsets.symmetric(vertical: 14.0),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 14.0),
+                  const SizedBox(height: 12.0),
+                  const SizedBox(height: 12.0),
                   const Text(
                     'Password',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 18.0,
+                      fontSize: 20.0,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -132,9 +149,11 @@ class _LoginState extends State<Login> {
                         border: InputBorder.none,
                         prefixIcon: const Icon(
                           Icons.lock,
+                          size: 24.0,
                           color: Color(0xff3d3e67),
                         ),
                         hintText: 'Enter your password',
+                        hintStyle: const TextStyle(fontSize: 16.0),
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 14.0,
                         ),
@@ -160,7 +179,7 @@ class _LoginState extends State<Login> {
                         'Login',
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 22.0,
+                          fontSize: 24.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -188,7 +207,11 @@ class _LoginState extends State<Login> {
                     children: [
                       const Text(
                         'Don\'t have an account? ',
-                        style: TextStyle(color: Colors.white70),
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       GestureDetector(
                         onTap: () => Navigator.of(context).pushNamed('/signup'),
@@ -196,6 +219,7 @@ class _LoginState extends State<Login> {
                           'Signup',
                           style: TextStyle(
                             color: Color(0xff904c6e),
+                            fontSize: 20.0,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
