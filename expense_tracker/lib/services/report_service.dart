@@ -204,10 +204,11 @@ class ReportService {
       // Save file
       Directory? directory;
       if (Platform.isAndroid) {
-        // For Android, save to Downloads folder
+        // For Android, save to public Downloads folder
         directory = Directory('/storage/emulated/0/Download');
+        // Create the directory if it doesn't exist
         if (!await directory.exists()) {
-          directory = await getExternalStorageDirectory();
+          await directory.create(recursive: true);
         }
       } else {
         directory = await getApplicationDocumentsDirectory();
@@ -215,7 +216,7 @@ class ReportService {
 
       final fileName =
           'ExpenseReport_${periodName.replaceAll(' ', '_')}_${now.day}_${now.month}_${now.year}.pdf';
-      final file = File('${directory!.path}/$fileName');
+      final file = File('${directory.path}/$fileName');
       await file.writeAsBytes(await pdf.save());
 
       return file.path;
@@ -298,10 +299,11 @@ class ReportService {
       // Save file
       Directory? directory;
       if (Platform.isAndroid) {
-        // For Android, save to Downloads folder
+        // For Android, save to public Downloads folder
         directory = Directory('/storage/emulated/0/Download');
+        // Create the directory if it doesn't exist
         if (!await directory.exists()) {
-          directory = await getExternalStorageDirectory();
+          await directory.create(recursive: true);
         }
       } else {
         directory = await getApplicationDocumentsDirectory();
@@ -309,7 +311,7 @@ class ReportService {
 
       final fileName =
           'ExpenseReport_${periodName.replaceAll(' ', '_')}_${now.day}_${now.month}_${now.year}.csv';
-      final file = File('${directory!.path}/$fileName');
+      final file = File('${directory.path}/$fileName');
       await file.writeAsString(csv);
 
       return file.path;
