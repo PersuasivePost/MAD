@@ -6,10 +6,90 @@ import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
 import 'package:expense_tracker/services/finance_model.dart';
 import 'package:expense_tracker/services/user_service.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ReportService {
+  /// Request storage permissions if needed
+  static Future<bool> _requestStoragePermission() async {
+    if (Platform.isAndroid) {
+      // For Android 13+ (API 33+), request different permissions
+      if (await Permission.manageExternalStorage.isGranted) {
+        return true;
+      }
+
+      // Try to request storage permission
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        status = await Permission.storage.request();
+      }
+
+      // If still not granted, try manageExternalStorage (for Android 11+)
+      if (!status.isGranted) {
+        final manageStatus = await Permission.manageExternalStorage.request();
+        if (manageStatus.isGranted) {
+          return true;
+        }
+      }
+
+      // Even if permission denied, we can still try - the package handles it
+      print('Storage permission status: $status');
+      return true; // Allow attempt anyway
+    }
+    return true; // iOS or other platforms
+  }
+
+  /// Get the directory to save report files.
+  /// Saves directly to public Downloads folder!
+  static Future<Directory?> _getReportDirectory() async {
+    try {
+      if (Platform.isAndroid) {
+        // Direct path to Downloads folder
+        final Directory downloadsDir =
+            Directory('/storage/emulated/0/Download');
+
+        // Check if it exists, if not create it
+        if (!await downloadsDir.exists()) {
+          try {
+            await downloadsDir.create(recursive: true);
+            print('Created Downloads directory');
+          } catch (e) {
+            print('Could not create Downloads directory: $e');
+          }
+        }
+
+        // Verify it exists now
+        if (await downloadsDir.exists()) {
+          print('Using Downloads directory: ${downloadsDir.path}');
+          return downloadsDir;
+        }
+
+        print('Downloads directory does not exist, using fallback');
+      }
+
+      // Fallback for iOS or if Downloads doesn't work
+      print('Using app documents directory as fallback');
+      return await getApplicationDocumentsDirectory();
+    } catch (e) {
+      print('Error getting downloads directory: $e');
+      // Ultimate fallback
+      try {
+        return await getApplicationDocumentsDirectory();
+      } catch (e2) {
+        print('Failed to get documents directory: $e2');
+        return null;
+      }
+    }
+  }
+
   static Future<String?> generatePDFReport({required bool isYear}) async {
     try {
+      // Request storage permission first
+      final hasPermission = await _requestStoragePermission();
+      if (!hasPermission) {
+        print('Storage permission not granted');
+        return null;
+      }
+
       final pdf = pw.Document();
       final now = DateTime.now();
       final userName = UserService.instance.userName.isNotEmpty
@@ -202,24 +282,25 @@ class ReportService {
       );
 
       // Save file
-      Directory? directory;
-      if (Platform.isAndroid) {
-        // For Android, save to public Downloads folder
-        directory = Directory('/storage/emulated/0/Download');
-        // Create the directory if it doesn't exist
-        if (!await directory.exists()) {
-          await directory.create(recursive: true);
-        }
-      } else {
-        directory = await getApplicationDocumentsDirectory();
+      final directory = await _getReportDirectory();
+      if (directory == null) {
+        print(
+            'Error: Could not determine a valid directory for saving the report');
+        return null;
       }
 
       final fileName =
           'ExpenseReport_${periodName.replaceAll(' ', '_')}_${now.day}_${now.month}_${now.year}.pdf';
       final file = File('${directory.path}/$fileName');
-      await file.writeAsBytes(await pdf.save());
 
-      return file.path;
+      try {
+        await file.writeAsBytes(await pdf.save());
+        print('PDF Report saved successfully to: ${file.path}');
+        return file.path;
+      } catch (writeError) {
+        print('Error writing PDF file: $writeError');
+        return null;
+      }
     } catch (e) {
       print('Error generating PDF: $e');
       return null;
@@ -228,6 +309,13 @@ class ReportService {
 
   static Future<String?> generateCSVReport({required bool isYear}) async {
     try {
+      // Request storage permission first
+      final hasPermission = await _requestStoragePermission();
+      if (!hasPermission) {
+        print('Storage permission not granted');
+        return null;
+      }
+
       final now = DateTime.now();
       final userName = UserService.instance.userName.isNotEmpty
           ? UserService.instance.userName
@@ -297,24 +385,25 @@ class ReportService {
       String csv = const ListToCsvConverter().convert(rows);
 
       // Save file
-      Directory? directory;
-      if (Platform.isAndroid) {
-        // For Android, save to public Downloads folder
-        directory = Directory('/storage/emulated/0/Download');
-        // Create the directory if it doesn't exist
-        if (!await directory.exists()) {
-          await directory.create(recursive: true);
-        }
-      } else {
-        directory = await getApplicationDocumentsDirectory();
+      final directory = await _getReportDirectory();
+      if (directory == null) {
+        print(
+            'Error: Could not determine a valid directory for saving the report');
+        return null;
       }
 
       final fileName =
           'ExpenseReport_${periodName.replaceAll(' ', '_')}_${now.day}_${now.month}_${now.year}.csv';
       final file = File('${directory.path}/$fileName');
-      await file.writeAsString(csv);
 
-      return file.path;
+      try {
+        await file.writeAsString(csv);
+        print('CSV Report saved successfully to: ${file.path}');
+        return file.path;
+      } catch (writeError) {
+        print('Error writing CSV file: $writeError');
+        return null;
+      }
     } catch (e) {
       print('Error generating CSV: $e');
       return null;

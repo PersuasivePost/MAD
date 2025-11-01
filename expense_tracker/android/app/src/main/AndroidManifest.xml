@@ -2,11 +2,14 @@
     <!-- Storage permissions for saving reports -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <!-- For Android 11+, allow managing files in shared storage (optional, for Downloads folder) -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     
     <application
         android:label="expense_tracker"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

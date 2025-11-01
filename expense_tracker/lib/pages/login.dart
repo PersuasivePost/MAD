@@ -59,6 +59,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
           Image.asset(
@@ -68,11 +69,12 @@ class _LoginState extends State<Login> {
             fit: BoxFit.cover,
           ),
           SafeArea(
-            child: Padding(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.only(
                 left: 20.0,
                 top: 50.0,
                 right: 20.0,
+                bottom: 20.0,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

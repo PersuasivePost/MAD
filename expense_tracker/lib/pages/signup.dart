@@ -31,6 +31,7 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Container(
         child: Stack(
           children: [
@@ -40,8 +41,9 @@ class _SignupState extends State<Signup> {
               width: MediaQuery.of(context).size.width,
               fit: BoxFit.cover,
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, top: 50.0),
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                  left: 20.0, top: 50.0, right: 20.0, bottom: 20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
