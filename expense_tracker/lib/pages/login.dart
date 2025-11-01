@@ -68,16 +68,6 @@ class _LoginState extends State<Login> {
                     style: TextStyle(color: Colors.white70, fontSize: 16.0),
                   ),
                   const SizedBox(height: 80.0),
-
-                  const Text(
-                    'Email',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 12.0),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
