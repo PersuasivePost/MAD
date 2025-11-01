@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:expense_tracker/services/finance_model.dart';
+import 'package:expense_tracker/services/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -13,6 +14,20 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+    UserService.instance.addListener(_onUserChange);
+  }
+
+  void _onUserChange() => setState(() {});
+
+  @override
+  void dispose() {
+    UserService.instance.removeListener(_onUserChange);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,9 +44,11 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundImage: AssetImage('images/boy1.jpg'),
             ),
             const SizedBox(height: 12.0),
-            const Text(
-              'Ashvatth Joshi',
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+            Text(
+              UserService.instance.userName.isNotEmpty
+                  ? UserService.instance.userName
+                  : 'Guest',
+              style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8.0),
             Row(
@@ -62,9 +79,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 await FirebaseAuth.instance.signOut();
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.remove('loggedIn');
-                // detach Firestore listeners
+                // detach Firestore listeners and clear user data
                 try {
                   FinanceModel.instance.detach();
+                  UserService.instance.clear();
                 } catch (_) {}
                 if (!mounted) return;
                 Navigator.of(context).pushReplacementNamed('/login');

@@ -30,7 +30,8 @@ class FinanceModel extends ChangeNotifier {
   List<FinanceItem> get expenses => List.unmodifiable(_expenses);
   List<FinanceItem> get incomes => List.unmodifiable(_incomes);
 
-  void addExpense(String title, double amount, String category) {
+  void addExpense(String title, double amount, String category, {DateTime? date}) {
+    final itemDate = date ?? DateTime.now();
     // If attached to a user, write to Firestore; snapshot listener will update local state.
     if (_userId != null) {
       FirebaseFirestore.instance
@@ -41,17 +42,18 @@ class FinanceModel extends ChangeNotifier {
         'title': title,
         'amount': amount,
         'category': category,
-        'date': DateTime.now().toIso8601String(),
+        'date': itemDate.toIso8601String(),
       });
       return;
     }
 
     _expenses
-        .add(FinanceItem(title: title, amount: amount, category: category));
+        .add(FinanceItem(title: title, amount: amount, category: category, date: itemDate));
     notifyListeners();
   }
 
-  void addIncome(String title, double amount) {
+  void addIncome(String title, double amount, {DateTime? date}) {
+    final itemDate = date ?? DateTime.now();
     if (_userId != null) {
       FirebaseFirestore.instance
           .collection('users')
@@ -60,12 +62,12 @@ class FinanceModel extends ChangeNotifier {
           .add({
         'title': title,
         'amount': amount,
-        'date': DateTime.now().toIso8601String(),
+        'date': itemDate.toIso8601String(),
       });
       return;
     }
 
-    _incomes.add(FinanceItem(title: title, amount: amount));
+    _incomes.add(FinanceItem(title: title, amount: amount, date: itemDate));
     notifyListeners();
   }
 

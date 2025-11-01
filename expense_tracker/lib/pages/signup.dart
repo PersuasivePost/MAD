@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:expense_tracker/services/finance_model.dart';
+import 'package:expense_tracker/services/user_service.dart';
 
 class Signup extends StatefulWidget {
   static const routeName = '/signup';
@@ -204,6 +205,7 @@ class _SignupState extends State<Signup> {
                               if (cred.user != null) {
                                 FinanceModel.instance
                                     .attachForUser(cred.user!.uid);
+                                await UserService.instance.loadUserData();
                               }
                               if (!mounted) return;
                               Navigator.of(context)

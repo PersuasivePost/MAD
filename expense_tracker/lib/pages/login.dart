@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:expense_tracker/services/finance_model.dart';
+import 'package:expense_tracker/services/user_service.dart';
 
 class Login extends StatefulWidget {
   static const routeName = '/login';
@@ -43,6 +44,7 @@ class _LoginState extends State<Login> {
       // Attach finance model to this user so UI updates from Firestore
       if (cred.user != null) {
         FinanceModel.instance.attachForUser(cred.user!.uid);
+        await UserService.instance.loadUserData();
       }
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/home');

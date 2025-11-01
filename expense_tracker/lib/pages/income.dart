@@ -181,66 +181,105 @@ class _IncomePageState extends State<IncomePage> {
   void _showAddIncomeDialog(BuildContext context) async {
     final titleCtl = TextEditingController();
     final amountCtl = TextEditingController();
+    DateTime selectedDate = DateTime.now();
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (ctx) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          title: const Text(
-            'Add Income',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: titleCtl,
-                decoration: InputDecoration(
-                  labelText: 'Source',
-                  hintText: 'e.g., Salary, Freelance',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              title: const Text(
+                'Add Income',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: titleCtl,
+                    decoration: InputDecoration(
+                      labelText: 'Source',
+                      hintText: 'e.g., Salary, Freelance',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      prefixIcon: const Icon(Icons.edit),
+                    ),
                   ),
-                  prefixIcon: const Icon(Icons.edit),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              TextField(
-                controller: amountCtl,
-                decoration: InputDecoration(
-                  labelText: 'Amount',
-                  hintText: 'e.g., 1000.00',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                  const SizedBox(height: 16.0),
+                  TextField(
+                    controller: amountCtl,
+                    decoration: InputDecoration(
+                      labelText: 'Amount',
+                      hintText: 'e.g., 1000.00',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      prefixIcon: const Icon(Icons.attach_money),
+                    ),
+                    keyboardType: TextInputType.number,
                   ),
-                  prefixIcon: const Icon(Icons.attach_money),
-                ),
-                keyboardType: TextInputType.number,
+                  const SizedBox(height: 16.0),
+                  // Date picker
+                  InkWell(
+                    onTap: () async {
+                      final pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDate,
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime.now(),
+                      );
+                      if (pickedDate != null) {
+                        setDialogState(() {
+                          selectedDate = pickedDate;
+                        });
+                      }
+                    },
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: 'Date',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        prefixIcon: const Icon(Icons.calendar_today),
+                      ),
+                      child: Text(
+                        '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                        style: const TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xff904c6e),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Cancel'),
                 ),
-              ),
-              onPressed: () {
-                final a = double.tryParse(amountCtl.text) ?? 0.0;
-                Navigator.of(ctx).pop({'title': titleCtl.text, 'amount': a});
-              },
-              child: const Text('Add', style: TextStyle(color: Colors.white)),
-            ),
-          ],
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff904c6e),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                  onPressed: () {
+                    final a = double.tryParse(amountCtl.text) ?? 0.0;
+                    Navigator.of(ctx).pop({
+                      'title': titleCtl.text,
+                      'amount': a,
+                      'date': selectedDate,
+                    });
+                  },
+                  child: const Text('Add', style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -249,6 +288,7 @@ class _IncomePageState extends State<IncomePage> {
       FinanceModel.instance.addIncome(
         result['title']?.isEmpty ?? true ? 'Income' : result['title'],
         (result['amount'] ?? 0.0) as double,
+        date: result['date'] as DateTime?,
       );
     }
   }

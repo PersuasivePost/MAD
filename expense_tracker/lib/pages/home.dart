@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:expense_tracker/services/support_widgets.dart';
 import 'package:expense_tracker/services/finance_model.dart';
+import 'package:expense_tracker/services/user_service.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -18,6 +19,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     FinanceModel.instance.addListener(_onFinanceChange);
+    UserService.instance.addListener(_onFinanceChange);
   }
 
   void _onFinanceChange() => setState(() {});
@@ -48,6 +50,7 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     FinanceModel.instance.removeListener(_onFinanceChange);
+    UserService.instance.removeListener(_onFinanceChange);
     super.dispose();
   }
 
@@ -128,7 +131,9 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       Text(
-                        'Ashvatth Joshi',
+                        UserService.instance.userName.isNotEmpty
+                            ? UserService.instance.userName
+                            : 'Guest',
                         style: AppWidget.headlineTextStyle(20.0),
                       ),
                     ],

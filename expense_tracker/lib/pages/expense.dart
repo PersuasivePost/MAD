@@ -207,6 +207,7 @@ class _ExpensePageState extends State<ExpensePage> {
     final titleCtl = TextEditingController();
     final amountCtl = TextEditingController();
     String selectedCategory = 'Shopping';
+    DateTime selectedDate = DateTime.now();
 
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
@@ -249,6 +250,36 @@ class _ExpensePageState extends State<ExpensePage> {
                         prefixIcon: const Icon(Icons.attach_money),
                       ),
                       keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 16.0),
+                    // Date picker
+                    InkWell(
+                      onTap: () async {
+                        final pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate,
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime.now(),
+                        );
+                        if (pickedDate != null) {
+                          setDialogState(() {
+                            selectedDate = pickedDate;
+                          });
+                        }
+                      },
+                      child: InputDecorator(
+                        decoration: InputDecoration(
+                          labelText: 'Date',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          prefixIcon: const Icon(Icons.calendar_today),
+                        ),
+                        child: Text(
+                          '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                          style: const TextStyle(fontSize: 16.0),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 16.0),
                     const Text(
@@ -315,7 +346,8 @@ class _ExpensePageState extends State<ExpensePage> {
                     Navigator.of(ctx).pop({
                       'title': titleCtl.text,
                       'amount': a,
-                      'category': selectedCategory
+                      'category': selectedCategory,
+                      'date': selectedDate,
                     });
                   },
                   child:
@@ -333,6 +365,7 @@ class _ExpensePageState extends State<ExpensePage> {
         result['title']?.isEmpty ?? true ? 'Expense' : result['title'],
         (result['amount'] ?? 0.0) as double,
         result['category'] ?? 'Others',
+        date: result['date'] as DateTime?,
       );
     }
   }
