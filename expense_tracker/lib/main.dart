@@ -1,4 +1,6 @@
 import 'package:expense_tracker/pages/home.dart';
+import 'package:expense_tracker/pages/login.dart';
+import 'package:expense_tracker/pages/signup.dart';
 import 'package:flutter/material.dart';
 import 'pages/onboarding.dart';
 
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Expense Tracker',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: Home(),
+      home: Login(),
     );
   }
 }
