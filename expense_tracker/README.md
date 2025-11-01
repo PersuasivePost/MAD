@@ -30,16 +30,41 @@ A modern, user-friendly Flutter application for tracking personal expenses and i
 ![1762019507239](image/README/1762019507239.jpg)
 ![1762019512771](image/README/1762019512771.jpg)
 
-## Tech Stack
+## Download APK
 
-- **Framework**: Flutter
-- **Language**: Dart
-- **Backend**: Firebase (Authentication, Firestore)
-- **State Management**: Provider pattern
-- **Charts**: Custom painted donut chart
-- **File Generation**: PDF and CSV export capabilities
+**Latest Version**: v1.0.0
 
-## Usage
+### Direct Download:
+
+- [Download APK](https://github.com/PersuasivePost/MAD/raw/main/expense_tracker/expense_tracker.apk)
+
+### How to Install:
+
+1. Download the APK file using the link above
+2. On your Android device, go to Settings > Security/Privacy
+3. Enable "Install from unknown sources" or "Install unknown apps"
+4. Open the downloaded APK file and follow the installation prompts
+
+### For Future Releases:
+
+To create proper GitHub releases with APK uploads:
+
+1. Go to your repository on GitHub
+2. Click "Releases" in the right sidebar
+3. Click "Create a new release"
+4. Tag version as "v1.0.0"
+5. Add release notes
+6. Upload the `expense_tracker.apk` file
+7. Publish the release
+
+Then update the download link to point to: `https://github.com/PersuasivePost/MAD/releases/latest/download/expense_tracker.apk`
+
+### System Requirements:
+
+- Android 5.0 (API level 21) or higher
+- Internet connection for Firebase features
+
+## Installation (For Developers)
 
 1. **Sign Up/Login**: Create an account or log in with existing credentials
 2. **Add Expenses/Income**: Use the dedicated pages to add financial entries
