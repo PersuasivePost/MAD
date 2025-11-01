@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:expense_tracker/services/support_widgets.dart';
+import 'package:expense_tracker/services/finance_model.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -14,8 +15,96 @@ class _HomeState extends State<Home> {
   bool _showThisYear = true;
 
   @override
+  void initState() {
+    super.initState();
+    FinanceModel.instance.addListener(_onFinanceChange);
+  }
+
+  void _onFinanceChange() => setState(() {});
+
+  String _getMonthName(int month) {
+    const months = [
+      '',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    return months[month];
+  }
+
+  int _getDaysInMonth(int year, int month) {
+    return DateTime(year, month + 1, 0).day;
+  }
+
+  @override
+  void dispose() {
+    FinanceModel.instance.removeListener(_onFinanceChange);
+    super.dispose();
+  }
+
+  List<double> _buildSegments() {
+    final totals = FinanceModel.instance.categoryTotals(
+      ['Shopping', 'Grocery', 'Others'],
+      isYear: _showThisYear,
+    );
+    final values = [
+      totals['Shopping'] ?? 0.0,
+      totals['Grocery'] ?? 0.0,
+      totals['Others'] ?? 0.0
+    ];
+    final sum = values.fold(0.0, (a, b) => a + b);
+    if (sum <= 0) return [0.33, 0.33, 0.34]; // Equal segments when no data
+    return values.map((v) => v / sum).toList();
+  }
+
+  List<Widget> _buildLegendItems() {
+    final totals = FinanceModel.instance.categoryTotals(
+      ['Shopping', 'Grocery', 'Others'],
+      isYear: _showThisYear,
+    );
+    final shopping = totals['Shopping'] ?? 0.0;
+    final grocery = totals['Grocery'] ?? 0.0;
+    final others = totals['Others'] ?? 0.0;
+    return [
+      LegendItem(
+          color: const Color(0xffee6856),
+          label: 'Shopping',
+          amount: '\$${shopping.toStringAsFixed(0)}'),
+      const SizedBox(height: 8.0),
+      LegendItem(
+          color: const Color(0xff69c56b),
+          label: 'Grocery',
+          amount: '\$${grocery.toStringAsFixed(0)}'),
+      const SizedBox(height: 8.0),
+      LegendItem(
+          color: const Color(0xff2aa6b8),
+          label: 'Others',
+          amount: '\$${others.toStringAsFixed(0)}'),
+    ];
+  }
+
+  @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final totalExpense =
+        FinanceModel.instance.totalExpensesForPeriod(_showThisYear);
+    final totalIncome =
+        FinanceModel.instance.totalIncomeForPeriod(_showThisYear);
+
+    final now = DateTime.now();
+    final dateRangeText = _showThisYear
+        ? '1 Jan ${now.year} - 31 Dec ${now.year}'
+        : '1 ${_getMonthName(now.month)} ${now.year} - ${_getDaysInMonth(now.year, now.month)} ${_getMonthName(now.month)} ${now.year}';
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -46,11 +135,14 @@ class _HomeState extends State<Home> {
                   ),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(60.0),
-                    child: Image.asset(
-                      'images/boy1.jpg',
-                      height: 52.0,
-                      width: 52.0,
-                      fit: BoxFit.cover,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pushNamed('/profile'),
+                      child: Image.asset(
+                        'images/boy1.jpg',
+                        height: 52.0,
+                        width: 52.0,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ],
@@ -91,7 +183,7 @@ class _HomeState extends State<Home> {
                           style: AppWidget.headlineTextStyle(20.0),
                         ),
                         Text(
-                          '\$300',
+                          '\$${totalExpense.toStringAsFixed(0)}',
                           style: const TextStyle(
                             color: Color(0xffee6856),
                             fontSize: 26.0,
@@ -101,48 +193,32 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                     const SizedBox(height: 6.0),
-                    const Text(
-                      '1 Sept 2025 - 30 Sept 2025',
-                      style: TextStyle(
+                    Text(
+                      dateRangeText,
+                      style: const TextStyle(
                         color: Color.fromARGB(148, 0, 0, 0),
                         fontSize: 14,
                       ),
                     ),
-
                     const SizedBox(height: 14.0),
-
                     Row(
                       children: [
                         // donut chart
                         SizedBox(
                           width: 140,
                           height: 120,
-                          child: Center(child: DonutChart(size: 110)),
+                          child: Center(
+                              child: DonutChart(
+                            size: 110,
+                            segments: _buildSegments(),
+                          )),
                         ),
                         const SizedBox(width: 12.0),
                         // legend
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              LegendItem(
-                                color: Color(0xffee6856),
-                                label: 'Shopping',
-                                amount: '\$500',
-                              ),
-                              SizedBox(height: 8.0),
-                              LegendItem(
-                                color: Color(0xff69c56b),
-                                label: 'Grocery',
-                                amount: '\$300',
-                              ),
-                              SizedBox(height: 8.0),
-                              LegendItem(
-                                color: Color(0xff2aa6b8),
-                                label: 'Others',
-                                amount: '\$200',
-                              ),
-                            ],
+                            children: _buildLegendItems(),
                           ),
                         ),
                       ],
@@ -206,9 +282,8 @@ class _HomeState extends State<Home> {
                           child: Text(
                             'This Year',
                             style: TextStyle(
-                              color: _showThisYear
-                                  ? Colors.white
-                                  : Colors.black87,
+                              color:
+                                  _showThisYear ? Colors.white : Colors.black87,
                             ),
                           ),
                         ),
@@ -226,7 +301,7 @@ class _HomeState extends State<Home> {
                   Expanded(
                     child: InfoCard(
                       title: 'Income',
-                      value: '+\$5000',
+                      value: '+\$${totalIncome.toStringAsFixed(0)}',
                       accentColor: Colors.green,
                     ),
                   ),
@@ -234,7 +309,7 @@ class _HomeState extends State<Home> {
                   Expanded(
                     child: InfoCard(
                       title: 'Expenses',
-                      value: '+\$5000',
+                      value: '-\$${totalExpense.toStringAsFixed(0)}',
                       accentColor: const Color(0xffee6856),
                     ),
                   ),
@@ -375,16 +450,21 @@ class InfoCard extends StatelessWidget {
 
 class DonutChart extends StatelessWidget {
   final double size;
+  final List<double> segments;
 
-  const DonutChart({super.key, this.size = 100});
+  const DonutChart(
+      {super.key, this.size = 100, this.segments = const [0.5, 0.3, 0.2]});
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(size: Size(size, size), painter: _DonutPainter());
+    return CustomPaint(
+        size: Size(size, size), painter: _DonutPainter(segments: segments));
   }
 }
 
 class _DonutPainter extends CustomPainter {
+  final List<double> segments;
+  _DonutPainter({this.segments = const [0.5, 0.3, 0.2]});
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -399,7 +479,7 @@ class _DonutPainter extends CustomPainter {
 
     // segments (values: 50%, 30%, 20%) -> angles
     final full = 2 * math.pi;
-    final angles = [0.5 * full, 0.3 * full, 0.2 * full];
+    final angles = segments.map((s) => s * full).toList();
     final colors = [
       const Color(0xffee6856),
       const Color(0xff69c56b),

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:expense_tracker/services/finance_model.dart';
 
 class Login extends StatefulWidget {
+  static const routeName = '/login';
+
   const Login({super.key});
 
   @override
@@ -19,18 +24,34 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  void _onLogin() {
-    // simple placeholder action
+  Future<void> _onLogin() async {
     final email = _emailController.text.trim();
     final pass = _passwordController.text;
-    final ok = email.isNotEmpty && pass.isNotEmpty;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          ok ? 'Logged in as $email' : 'Please enter email and password',
-        ),
-      ),
-    );
+    if (email.isEmpty || pass.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Enter credentials')));
+      }
+      return;
+    }
+
+    try {
+      final cred = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: pass);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('loggedIn', true);
+      // Attach finance model to this user so UI updates from Firestore
+      if (cred.user != null) {
+        FinanceModel.instance.attachForUser(cred.user!.uid);
+      }
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('/home');
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Login failed: ${e.toString()}')));
+      }
+    }
   }
 
   @override
@@ -85,7 +106,6 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 14.0),
                   const Text(
                     'Password',
@@ -130,7 +150,6 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 30.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -161,20 +180,22 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 40.0),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         'Don\'t have an account? ',
                         style: TextStyle(color: Colors.white70),
                       ),
-                      Text(
-                        'Signup',
-                        style: TextStyle(
-                          color: Color(0xff904c6e),
-                          fontWeight: FontWeight.bold,
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pushNamed('/signup'),
+                        child: const Text(
+                          'Signup',
+                          style: TextStyle(
+                            color: Color(0xff904c6e),
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],

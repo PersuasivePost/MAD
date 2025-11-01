@@ -1,1 +1,14 @@
-10433 -> firebase
+10857 -> firebase
+
+profile page should include:
+name
+<name>
+email
+<email>
+add expense >
+add income >
+logout >
+delete account >
+features, where add expense will direct to expense page, add income to income, logout will logout of the app and delete account for account deletion
+all in list mode
+one below the other

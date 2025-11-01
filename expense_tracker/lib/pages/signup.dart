@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:expense_tracker/services/finance_model.dart';
 
 class Signup extends StatefulWidget {
+  static const routeName = '/signup';
+
   const Signup({super.key});
 
   @override
@@ -170,12 +176,54 @@ class _SignupState extends State<Signup> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Next",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
+                        GestureDetector(
+                          onTap: () async {
+                            final name = _nameController.text.trim();
+                            final email = _emailController.text.trim();
+                            final pass = _passwordController.text;
+                            if (name.isEmpty || email.isEmpty || pass.isEmpty) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content:
+                                            Text('Please fill all fields')));
+                              }
+                              return;
+                            }
+                            try {
+                              final cred = await FirebaseAuth.instance
+                                  .createUserWithEmailAndPassword(
+                                      email: email, password: pass);
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(cred.user!.uid)
+                                  .set({'name': name, 'email': email});
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setBool('loggedIn', true);
+                              if (cred.user != null) {
+                                FinanceModel.instance
+                                    .attachForUser(cred.user!.uid);
+                              }
+                              if (!mounted) return;
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/home');
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'Signup failed: ${e.toString()}')));
+                              }
+                            }
+                          },
+                          child: Text(
+                            "Next",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                         Container(
@@ -206,12 +254,17 @@ class _SignupState extends State<Signup> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text(
-                        "Login",
-                        style: TextStyle(
-                          color: Color(0xff904c6e),
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                      GestureDetector(
+                        onTap: () => Navigator.of(
+                          context,
+                        ).pushReplacementNamed('/login'),
+                        child: Text(
+                          "Login",
+                          style: TextStyle(
+                            color: Color(0xff904c6e),
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
