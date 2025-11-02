@@ -1,0 +1,30 @@
+you are required to design and implement a flutter application that simulates a simple weather forecast system. the app should allow users to view weather data for different cities, see a 5-day forecast, refresh data, and toggle between celcuis and fahrenheit.
+
+app structure:
+use a sacffold widget as the base layout
+the AppBar should display the title: "weather app"
+
+1. city selection:
+include a DropdownButton in the body to allow users to select a city (eg. new york, london, tokyo, mumbai, etc)
+when a city is selected: the displayed weather data(current cintitions+forecast) should update with the dummy weather data for that city
+
+2. current weather display:
+use a card widget to display the current weather of the selected city
+the card should incllude:
+temperature (value depends on celsius/fahrenheit setting)
+condition text(eg. sunny, cloudy, rainy)
+a weather icon for each
+
+3. forecast section
+below the current weather dispplay a horizontal listview that shows the 5-day weather forecast
+each forecast item should include:
+dayname (eg: mon, tue, etc)
+a weather icon
+temperature value
+data should be static/dummy, but shoulld change according to selected city
+
+4. unit toggle(celsius <-> fahrenheit)
+at thhe bottom, add a floatingacttionbutton that toggles between celsius and fahrenheit
+when toggled: both current weather card and 5-day forecast temperatures should update accordingly
+use a stateful boolean variable (isCelsius) to manage the toggle
+
