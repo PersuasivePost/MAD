@@ -392,6 +392,29 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            heroTag: 'add_income',
+            mini: true,
+            backgroundColor: Colors.green,
+            onPressed: () => Navigator.of(context).pushNamed('/income'),
+            child: const Icon(Icons.trending_up, color: Colors.white),
+            tooltip: 'Add Income',
+          ),
+          const SizedBox(height: 8.0),
+          FloatingActionButton(
+            heroTag: 'add_expense',
+            mini: true,
+            backgroundColor: const Color(0xffee6856),
+            onPressed: () => Navigator.of(context).pushNamed('/expense'),
+            child: const Icon(Icons.shopping_bag, color: Colors.white),
+            tooltip: 'Add Expense',
+          ),
+        ],
+      ),
     );
   }
 
