@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
               onTap: () => Navigator.of(context).pushNamed('/expense'),
             ),
             ListTile(
-              leading: const Icon(Icons.attach_money),
+              leading: const Icon(Icons.currency_rupee),
               title: const Text('Income'),
               onTap: () => Navigator.of(context).pushNamed('/income'),
             ),

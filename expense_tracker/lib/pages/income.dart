@@ -77,7 +77,7 @@ class _IncomePageState extends State<IncomePage> {
                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '\$${FinanceModel.instance.totalIncome.toStringAsFixed(2)}',
+                  '₹${FinanceModel.instance.totalIncome.toStringAsFixed(2)}',
                   style: const TextStyle(
                     fontSize: 18.0,
                     fontWeight: FontWeight.bold,
@@ -156,7 +156,7 @@ class _IncomePageState extends State<IncomePage> {
                             ),
                           ),
                           trailing: Text(
-                            '+\$${it.amount.toStringAsFixed(2)}',
+                            '+₹${it.amount.toStringAsFixed(2)}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
@@ -219,7 +219,7 @@ class _IncomePageState extends State<IncomePage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      prefixIcon: const Icon(Icons.attach_money),
+                      prefixIcon: const Icon(Icons.currency_rupee),
                     ),
                     keyboardType: TextInputType.number,
                   ),

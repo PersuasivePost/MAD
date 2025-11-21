@@ -166,12 +166,12 @@ class ReportService {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildSummaryCard('Total Income',
-                      '\$${totalIncome.toStringAsFixed(2)}', PdfColors.green),
+                      '₹${totalIncome.toStringAsFixed(2)}', PdfColors.green),
                   _buildSummaryCard('Total Expenses',
-                      '\$${totalExpense.toStringAsFixed(2)}', PdfColors.red),
+                      '₹${totalExpense.toStringAsFixed(2)}', PdfColors.red),
                   _buildSummaryCard(
                       'Balance',
-                      '\$${(totalIncome - totalExpense).toStringAsFixed(2)}',
+                      '₹${(totalIncome - totalExpense).toStringAsFixed(2)}',
                       PdfColors.blue),
                 ],
               ),
@@ -245,7 +245,7 @@ class ReportService {
                           '${e.date.day}/${e.date.month}/${e.date.year}',
                           e.title,
                           e.category,
-                          '\$${e.amount.toStringAsFixed(2)}',
+                          '₹${e.amount.toStringAsFixed(2)}',
                         ]),
                   ],
                 ),
@@ -271,7 +271,7 @@ class ReportService {
                     ...filteredIncomes.map((i) => [
                           '${i.date.day}/${i.date.month}/${i.date.year}',
                           i.title,
-                          '\$${i.amount.toStringAsFixed(2)}',
+                          '₹${i.amount.toStringAsFixed(2)}',
                         ]),
                   ],
                 ),
@@ -349,9 +349,10 @@ class ReportService {
 
       // Summary
       rows.add(['Summary']);
-      rows.add(['Total Income', totalIncome.toStringAsFixed(2)]);
-      rows.add(['Total Expenses', totalExpense.toStringAsFixed(2)]);
-      rows.add(['Balance', (totalIncome - totalExpense).toStringAsFixed(2)]);
+      rows.add(['Total Income', '₹${totalIncome.toStringAsFixed(2)}']);
+      rows.add(['Total Expenses', '₹${totalExpense.toStringAsFixed(2)}']);
+      rows.add(
+          ['Balance', '₹${(totalIncome - totalExpense).toStringAsFixed(2)}']);
       rows.add([]);
 
       // Expenses
@@ -363,7 +364,7 @@ class ReportService {
             '${e.date.day}/${e.date.month}/${e.date.year}',
             e.title,
             e.category,
-            e.amount.toStringAsFixed(2),
+            '₹${e.amount.toStringAsFixed(2)}',
           ]);
         }
         rows.add([]);
@@ -377,7 +378,7 @@ class ReportService {
           rows.add([
             '${i.date.day}/${i.date.month}/${i.date.year}',
             i.title,
-            i.amount.toStringAsFixed(2),
+            '₹${i.amount.toStringAsFixed(2)}',
           ]);
         }
       }
@@ -447,7 +448,7 @@ class ReportService {
         pw.SizedBox(width: 8),
         pw.Text(label, style: const pw.TextStyle(fontSize: 12)),
         pw.Spacer(),
-        pw.Text('\$${amount.toStringAsFixed(2)}',
+        pw.Text('₹${amount.toStringAsFixed(2)}',
             style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold)),
       ],
     );

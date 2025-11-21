@@ -82,17 +82,17 @@ class _HomeState extends State<Home> {
       LegendItem(
           color: const Color(0xffee6856),
           label: 'Shopping',
-          amount: '\$${shopping.toStringAsFixed(0)}'),
+          amount: '₹${shopping.toStringAsFixed(0)}'),
       const SizedBox(height: 8.0),
       LegendItem(
           color: const Color(0xff69c56b),
           label: 'Grocery',
-          amount: '\$${grocery.toStringAsFixed(0)}'),
+          amount: '₹${grocery.toStringAsFixed(0)}'),
       const SizedBox(height: 8.0),
       LegendItem(
           color: const Color(0xff2aa6b8),
           label: 'Others',
-          amount: '\$${others.toStringAsFixed(0)}'),
+          amount: '₹${others.toStringAsFixed(0)}'),
     ];
   }
 
@@ -189,7 +189,7 @@ class _HomeState extends State<Home> {
                           style: AppWidget.headlineTextStyle(20.0),
                         ),
                         Text(
-                          '\$${totalExpense.toStringAsFixed(0)}',
+                          '₹${totalExpense.toStringAsFixed(0)}',
                           style: const TextStyle(
                             color: Color(0xffee6856),
                             fontSize: 26.0,
@@ -307,7 +307,7 @@ class _HomeState extends State<Home> {
                   Expanded(
                     child: InfoCard(
                       title: 'Income',
-                      value: '+\$${totalIncome.toStringAsFixed(0)}',
+                      value: '+₹${totalIncome.toStringAsFixed(0)}',
                       accentColor: Colors.green,
                     ),
                   ),
@@ -315,7 +315,7 @@ class _HomeState extends State<Home> {
                   Expanded(
                     child: InfoCard(
                       title: 'Expenses',
-                      value: '-\$${totalExpense.toStringAsFixed(0)}',
+                      value: '-₹${totalExpense.toStringAsFixed(0)}',
                       accentColor: const Color(0xffee6856),
                     ),
                   ),
